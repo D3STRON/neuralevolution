@@ -22,7 +22,10 @@ class Bird{
         }
     } 
 
-
+    mutate()
+    {
+        this.brain.mutate(0.1)
+    }
     show()
     {
         stroke(255)

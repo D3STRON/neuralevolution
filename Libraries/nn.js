@@ -65,18 +65,27 @@ class NeuralNetwork{
         this.bias_h.add(hidden_gradients)   // finally adjusting biases for hidden layer
     }
 
-    mutate(func) {
+    mutate(rate) {
+        function mutate(val)
+        {
+            if(Math.random()<rate)
+            {
+                return val +randomGaussian(0, 0.1)
+            }else{
+                return val
+            }
+        }    
     //console.log(this.weight_ih)    
-    this.weight_ih.map(func);
-    this.weight_ho.map(func);
-    this.bias_h.map(func);
-    this.bias_o.map(func);
+    this.weight_ih.map(mutate);
+    this.weight_ho.map(mutate);
+    this.bias_h.map(mutate);
+    this.bias_o.map(mutate);
   }
 }
 
 function sigmoid(x)
 {
-    return 1/(1+Math.exp(-x))
+   return 1/(1+Math.exp(-x))
 }
 
 function dsigmoid(y)

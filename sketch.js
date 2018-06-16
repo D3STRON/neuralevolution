@@ -1,4 +1,4 @@
-const TOTAL= 500
+const TOTAL= 200
 var birds=[];
 var savedBirds=[]
 var pipes=[];
@@ -10,12 +10,15 @@ function setup()
     {
         birds[i]= new Bird()
     }
-    pipes.push(new Pipe())
 }
 function draw()
 {
     background(0)
-    
+    if(counter % 200 == 0)
+    {
+        pipes.push(new Pipe())
+    }
+    counter++;
     for(let i=pipes.length-1;i >=0;i--)
     {
         pipes[i].show()
@@ -47,11 +50,6 @@ function draw()
         pipes=[]
         counter=0
     }
-    if(counter % 200 == 0)
-    {
-        pipes.push(new Pipe())
-    }
-    counter++;
 }
 
 function keyPressed()
