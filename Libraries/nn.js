@@ -2,6 +2,21 @@
 class NeuralNetwork{
     constructor(numI, numH, numO)
     {
+        if (numI instanceof NeuralNetwork) {
+            let a = numI;
+            this.input_nodes = a.input_nodes;
+            this.hidden_nodes = a.hidden_nodes;
+            this.output_nodes = a.output_nodes;
+      
+           //console.log(a)
+            this.weight_ih = a.weight_ih.copy();
+            this.weight_ho = a.weight_ho.copy();
+      
+            this.bias_h = a.bias_h.copy();
+            this.bias_o = a.bias_o.copy();
+            this.activation= a.activation
+            this.delta_activation= a.delta_activation
+          } else {
         this.input_nodes=numI 
         this.hidden_nodes=numH
         this.output_nodes=numO
@@ -14,6 +29,9 @@ class NeuralNetwork{
         this.bias_o=new Matrix(this.output_nodes,1)
         this.bias_o.randomize()
         this.learning_rate= 0.1
+        this.activation = reLU
+        this.delta_activation= dsigmoid
+          }
     }
 
     feedforward(input_array)
@@ -22,11 +40,11 @@ class NeuralNetwork{
         
         this.hidden= Matrix.multiply(this.weight_ih,this.inputs)
         this.hidden.add(this.bias_h)//output of the weighted sum plus bias
-        this.hidden.map(sigmoid)// finally pass that outputs at every hidden node through the activation function to get the hidden layers final output
+        this.hidden.map(this.activation)// finally pass that outputs at every hidden node through the activation function to get the hidden layers final output
         
         let output=Matrix.multiply(this.weight_ho,this.hidden)//simialar for the final output layer for which the hidden layer is the input
         output.add(this.bias_o)
-        output.map(sigmoid)
+        output.map(this.activation)
 
         return output
     }
@@ -39,7 +57,7 @@ class NeuralNetwork{
         console.log(output_errors.data[0][0]*output_errors.data[0][0])
 
         //Calculate gradient for hidden to output
-        let gradients= Matrix.map(outputs,dsigmoid)// derivative for activation function output elements are now oi(1+oi)
+        let gradients= Matrix.map(outputs,this.delta_activation)// derivative for activation function output elements are now oi(1+oi)
         gradients.multiply(output_errors)//this if for deltas_weight_ho which is the required change in Weights between output layer and hidden layer
         gradients.multiply(this.learning_rate)// multiplying every element with learning rate
         
@@ -53,7 +71,7 @@ class NeuralNetwork{
         let hidden_error= Matrix.multiply(Matrix.transpose(this.weight_ho),output_errors)// this matrix is the error of the hidden layer 
         
         //Claculate gradient for input layer to hidden 
-        let hidden_gradients= Matrix.map(this.hidden,dsigmoid)
+        let hidden_gradients= Matrix.map(this.hidden,this.delta_activation)
         hidden_gradients.multiply(hidden_error)
         hidden_gradients.multiply(this.learning_rate)
 
@@ -81,6 +99,10 @@ class NeuralNetwork{
     this.bias_h.map(mutate);
     this.bias_o.map(mutate);
   }
+  copy()
+  {
+      return new NeuralNetwork(this)
+  }
 }
 
 function sigmoid(x)
@@ -101,4 +123,24 @@ function tanh(x)
 function dtanh(y)
 {
     return 1-y*y
+}
+
+function taninv(x)
+{
+    return Math.atan(x)
+}
+
+function dtaninv(y)
+{
+    return 1/(1+y*y)
+}
+
+function reLU(x)
+{
+    if(x>=0)
+    {
+        return x
+
+    }
+    return 0
 }

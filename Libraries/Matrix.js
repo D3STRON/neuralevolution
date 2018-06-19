@@ -124,8 +124,7 @@ class Matrix{
         {
             for(let j=0;j<this.cols;j++)
             {
-                let val = this.data[i][j];
-                this.data[i][j] = func(val, i, j)
+                this.data[i][j]=func(this.data[i][j]);
             }
         }
     }
